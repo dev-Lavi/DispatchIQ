@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --aggroso-bg: #07171D;
+  --aggroso-bg-soft: #101F25;
+  --aggroso-bg-teal: #0D2630;
+  --aggroso-cream: #FBF8F1;
+  --aggroso-cream-soft: #F2EDE3;
+  --aggroso-cream-card: #FFFFFF;
+  --aggroso-mint: #A9DFCB;
+  --aggroso-mint-dark: #2A6E57;
+  --aggroso-coral: #F4A78E;
+  --aggroso-coral-dark: #C24D28;
+  --aggroso-text: #102025;
+  --aggroso-text-dark: #102025;
+  --aggroso-muted: #6B675E;
+  --aggroso-border: #DAD3C9;
+  --aggroso-border-light: #E7E2D8;
+}
+
+body {
+  background-color: var(--aggroso-cream);
+  color: var(--aggroso-text-dark);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  background-image: 
+    linear-gradient(to right, rgba(16, 32, 37, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(16, 32, 37, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Custom scrollbars for clean light cream theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F2EDE3;
+}
+::-webkit-scrollbar-thumb {
+  background: #DAD3C9;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #102025;
+}

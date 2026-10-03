@@ -1,0 +1,12 @@
+{
+  "name": "field-service-dispatch-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Field Service Dispatch & Replanning Agent with Deterministic Constraints and Human Approval",
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "test": "npm --prefix server test"
+  }
+}
