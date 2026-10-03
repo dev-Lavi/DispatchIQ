@@ -70,6 +70,28 @@ export const api = {
     return res.json();
   },
 
+  async createRequest(payload: {
+    customerName: string;
+    region: string;
+    requiredSkill: string;
+    priority: string;
+    durationMinutes: number;
+    windowStart: string;
+    windowEnd: string;
+    notes?: string;
+  }): Promise<any> {
+    const res = await fetch(`${API_BASE}/requests`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to create work order');
+    }
+    return res.json();
+  },
+
   async addEmergencyRequest(): Promise<any> {
     const res = await fetch(`${API_BASE}/emergency`, { method: 'POST' });
     if (!res.ok) throw new Error('Failed to ingest emergency request');

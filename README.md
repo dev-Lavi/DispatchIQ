@@ -202,3 +202,41 @@ npm run test:e2e
 The project includes a pre-configured seed scenario located in `docs/12-demo-scenario.md`:
 * **4 Technicians**: Carlos Rivera (North, HVAC/Plumb), Maria Santos (South, Elect/HVAC), David Kim (Central, Plumb/Elect), Elena Vance (North, Elect).
 * **10 Requests**: Spanning routine HVAC calls, electrical inspections, emergency leak triage, and a planned bottleneck request demonstrating unassignable analysis.
+
+---
+
+## Completed vs. Excluded Scope Matrix
+
+Per the assessment problem statement:
+
+| Feature / Domain | Status | Specification Notes |
+| :--- | :---: | :--- |
+| **Deterministic Constraint Engine** | ✅ Complete | 7 hard rules strictly validated mathematically before human review. |
+| **AI Planning Agent (Gemini 1.5 Flash)** | ✅ Complete | LLM produces candidate JSON schedules, trade-offs, and questions. |
+| **Gantt Schedule Timeline** | ✅ Complete | Interactive visual timeline (08:00–17:00), shift caps, status badges. |
+| **Version History & Diffing** | ✅ Complete | Visual categorization of UNCHANGED, RESCHEDULED, REASSIGNED, NEW, UNASSIGNED. |
+| **Human-in-the-Loop Override** | ✅ Complete | Real-time override validation modal; dispatcher approval gates database writes. |
+| **Intraday Disruption & Preemption** | ✅ Complete | Emergency ticket insertion and technician cancellation replanning. |
+| **Immutable Completed Job Lock** | ✅ Complete | In-progress and completed jobs cannot be shifted or preempted. |
+| **Audit Ledger & Mock Notifications** | ✅ Complete | Chronological audit trail; simulated Push/SMS technician alerts. |
+| **Live Deployed Cloud Services** | ✅ Complete | Hosted frontend (Vercel) + hosted API (Render) + Gemini integration. |
+| **Real Maps & Live GPS Tracking** | ❌ Excluded | Explicitly excluded by problem specification (focus is on constraint & agent logic). |
+| **Route-Optimization / Traffic APIs** | ❌ Excluded | Excluded by specification (travel buffers modeled as operational slack). |
+| **Payroll & Accounting Systems** | ❌ Excluded | Excluded by specification. |
+| **Live External SMS Gateways** | ❌ Excluded | Modeled as clean mock notifications in the notification ledger. |
+
+---
+
+## Known Limitations
+
+1. **Single Operating Day Horizon**: The schedule horizon is constrained to one single 08:00–17:00 shift (October 15, 2026). Multi-day rolling horizons are not modeled.
+2. **Cold Start Latency on Free Render Tier**: When inactive for 15+ minutes, Render spins down the free backend service. The initial wakeup request may take ~30–45 seconds. Subsequent requests execute instantly.
+3. **In-Memory Store with Seed Reset**: The application defaults to an in-memory transactional store initialized with the demo seed data, allowing 1-click resets (`/api/demo/reset`) during evaluation. For enterprise production, standard PostgreSQL via Prisma ORM is supported.
+
+---
+
+## Live Deployment Links
+
+* **Frontend Dashboard (Vercel)**: [https://dispatch-iq-plum.vercel.app](https://dispatch-iq-plum.vercel.app)
+* **Backend API (Render)**: [https://dispatchiq-8kq4.onrender.com](https://dispatchiq-8kq4.onrender.com)
+* **API Health Check**: [https://dispatchiq-8kq4.onrender.com/health](https://dispatchiq-8kq4.onrender.com/health)

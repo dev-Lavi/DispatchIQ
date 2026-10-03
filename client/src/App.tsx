@@ -4,8 +4,10 @@ import { GanttTimeline } from './components/GanttTimeline';
 import { AiCopilotDrawer } from './components/AiCopilotDrawer';
 import { DiffModal } from './components/DiffModal';
 import { OverrideModal } from './components/OverrideModal';
+import { CreateWorkOrderModal } from './components/CreateWorkOrderModal';
+import { ScenarioPresetsModal } from './components/ScenarioPresetsModal';
 import { AuditNotificationTabs } from './components/AuditNotificationTabs';
-import { AppState, Assignment } from './types';
+import { AppState, Assignment, Region, Skill, Priority } from './types';
 import { api } from './services/api';
 import { PlayCircle } from 'lucide-react';
 
@@ -16,6 +18,8 @@ export const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showDiff, setShowDiff] = useState(true);
+  const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false);
+  const [isPresetsOpen, setIsPresetsOpen] = useState(false);
 
   // Load initial state
   const refreshState = async () => {
@@ -156,6 +160,69 @@ export const App: React.FC = () => {
     }
   };
 
+  // 9. Create Custom Work Order
+  const handleCreateRequest = async (payload: {
+    customerName: string;
+    region: Region;
+    requiredSkill: Skill;
+    priority: Priority;
+    durationMinutes: number;
+    windowStart: string;
+    windowEnd: string;
+    notes?: string;
+  }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await api.createRequest(payload);
+      await refreshState();
+    } catch (err: any) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 10. Run Preset Scenarios
+  const handleSelectScenario = async (scenarioId: 'BASELINE' | 'EMERGENCY' | 'TECH_SICK') => {
+    setLoading(true);
+    setError(null);
+    try {
+      if (scenarioId === 'BASELINE') {
+        await api.resetDemo();
+        await api.generatePlan();
+      } else if (scenarioId === 'EMERGENCY') {
+        if (state?.schedule.status === 'DRAFT') {
+          await api.generatePlan();
+          await api.approvePlan();
+        }
+        await api.addEmergencyRequest();
+        await api.replan({
+          triggerReason: 'EMERGENCY_REPLAN',
+          emergencyRequestId: 'SR-111',
+        });
+        setShowDiff(true);
+      } else if (scenarioId === 'TECH_SICK') {
+        if (state?.schedule.status === 'DRAFT') {
+          await api.generatePlan();
+          await api.approvePlan();
+        }
+        await api.updateTechnician('tech-02', { isAvailable: false });
+        await api.replan({
+          triggerReason: 'TECHNICIAN_CANCELLATION',
+          technicianId: 'tech-02',
+        });
+        setShowDiff(true);
+      }
+      await refreshState();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!state) {
     return (
       <div className="min-h-screen bg-[#FBF8F1] flex items-center justify-center">
@@ -198,6 +265,8 @@ export const App: React.FC = () => {
         onGeneratePlan={handleGeneratePlan}
         onIngestEmergency={handleIngestEmergency}
         onResetDemo={handleResetDemo}
+        onOpenCreateOrder={() => setIsCreateOrderOpen(true)}
+        onOpenPresets={() => setIsPresetsOpen(true)}
         loading={loading}
       />
 
@@ -281,6 +350,21 @@ export const App: React.FC = () => {
           onSaveOverride={handleSaveOverride}
         />
       )}
+
+      {/* Create Custom Work Order Modal */}
+      <CreateWorkOrderModal
+        isOpen={isCreateOrderOpen}
+        onClose={() => setIsCreateOrderOpen(false)}
+        onSubmit={handleCreateRequest}
+      />
+
+      {/* Reviewer Preset Scenarios Modal */}
+      <ScenarioPresetsModal
+        isOpen={isPresetsOpen}
+        onClose={() => setIsPresetsOpen(false)}
+        onSelectScenario={handleSelectScenario}
+        loading={loading}
+      />
     </div>
   );
 };

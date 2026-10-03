@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, AlertOctagon, RotateCcw, ShieldCheck, Clock, Layers } from 'lucide-react';
+import { Sparkles, AlertOctagon, RotateCcw, ShieldCheck, Clock, Layers, PlusCircle, Play } from 'lucide-react';
 import { Schedule, ScheduleVersion } from '../types';
 
 interface HeaderProps {
@@ -11,6 +11,8 @@ interface HeaderProps {
   onGeneratePlan: () => void;
   onIngestEmergency: () => void;
   onResetDemo: () => void;
+  onOpenCreateOrder: () => void;
+  onOpenPresets: () => void;
   loading: boolean;
 }
 
@@ -23,6 +25,8 @@ export const Header: React.FC<HeaderProps> = ({
   onGeneratePlan,
   onIngestEmergency,
   onResetDemo,
+  onOpenCreateOrder,
+  onOpenPresets,
   loading,
 }) => {
   const isViewingHistorical = selectedVersionId && selectedVersionId !== currentVersion?.id;
@@ -92,6 +96,26 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Action Controls */}
         <div className="flex items-center gap-2.5">
           <button
+            onClick={onOpenPresets}
+            disabled={loading}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FBF8F1] border border-[#DAD3C9] text-[#102025] font-semibold text-xs hover:bg-[#F2EDE3] active:scale-95 transition-all shadow-sm disabled:opacity-50"
+            title="Choose from 3 reviewer demo scenarios"
+          >
+            <Play className="w-3.5 h-3.5 text-[#294047]" />
+            <span>Scenarios</span>
+          </button>
+
+          <button
+            onClick={onOpenCreateOrder}
+            disabled={loading}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#A9DFCB]/30 border border-[#A9DFCB] text-[#102025] font-semibold text-xs hover:bg-[#A9DFCB]/50 active:scale-95 transition-all shadow-sm disabled:opacity-50"
+            title="Create a custom service request"
+          >
+            <PlusCircle className="w-3.5 h-3.5 text-[#294047]" />
+            <span>+ Work Order</span>
+          </button>
+
+          <button
             onClick={onGeneratePlan}
             disabled={loading}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#07171D] text-[#FFFDF8] font-medium text-xs hover:bg-[#102025] active:scale-95 transition-all shadow-md disabled:opacity-50"
@@ -104,11 +128,11 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onIngestEmergency}
             disabled={loading}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#F4A78E]/25 border border-[#F4A78E] text-[#C24D28] font-semibold text-xs hover:bg-[#F4A78E]/40 active:scale-95 transition-all shadow-sm disabled:opacity-50"
+            className="hidden lg:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#F4A78E]/25 border border-[#F4A78E] text-[#C24D28] font-semibold text-xs hover:bg-[#F4A78E]/40 active:scale-95 transition-all shadow-sm disabled:opacity-50"
             title="Simulate incoming emergency plumbing ticket at St. Jude Hospital"
           >
             <AlertOctagon className="w-3.5 h-3.5" />
-            <span>+ Ingest Emergency</span>
+            <span>+ Emergency</span>
           </button>
 
           <button
