@@ -235,6 +235,33 @@ Per the assessment problem statement:
 
 ---
 
+## Location & Geographic Territory Handling
+
+Per the assessment guidelines, real maps, GPS tracking, and route-optimization APIs were explicitly excluded. DispatchIQ models location using **discrete operational territories**:
+
+1. **Territory Definitions**: Fleet resources and customer sites are partitioned into defined regions (`North`, `South`, `Central`).
+2. **Deterministic Constraint Enforcement (`Rule 2`)**: The `DeterministicConstraintEngine` mathematically asserts that `technician.region === request.region`. Any violation yields an immediate `ERR_REGION_MISMATCH` rejection.
+3. **Proactive Trade-Off Generation**: When an intraday disruption leaves a region uncovered (e.g. technician illness), the AI agent identifies that 0 certified technicians exist in that territory and proactively suggests cross-region dispatcher authorization.
+4. **Intra-Territory Travel**: Modeled as operational slack within shift hours (08:00–17:00) and customer service windows.
+
+---
+
+## Keeping Render Backend Awake (UptimeRobot Setup)
+
+On Render's Free tier, web services spin down after 15 minutes of inactivity. To ensure your recruiters and reviewers experience **instantaneous sub-second load times** without 30-second cold starts:
+
+1. Create a free account at [UptimeRobot](https://uptimerobot.com/).
+2. Click **"+ Add New Monitor"**.
+3. Configure the monitor:
+   * **Monitor Type**: `HTTP(s)`
+   * **Friendly Name**: `DispatchIQ Render API`
+   * **URL (or IP)**: `https://dispatchiq-8kq4.onrender.com/health`
+   * **Monitoring Interval**: `Every 5 minutes` (or 10 minutes)
+4. Click **"Create Monitor"**.
+5. UptimeRobot will ping your `/health` endpoint every 5 minutes, keeping the container warm and 100% responsive 24/7!
+
+---
+
 ## Live Deployment Links
 
 * **Frontend Dashboard (Vercel)**: [https://dispatch-iq-plum.vercel.app](https://dispatch-iq-plum.vercel.app)
