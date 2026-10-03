@@ -1,10 +1,10 @@
 import React from 'react';
-import { X, Play, AlertOctagon, UserX, Calendar, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { X, Play, AlertOctagon, UserX, Calendar, CheckCircle2, ShieldAlert, Inbox, RotateCcw } from 'lucide-react';
 
 interface ScenarioPresetsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectScenario: (scenarioId: 'BASELINE' | 'EMERGENCY' | 'TECH_SICK') => Promise<void>;
+  onSelectScenario: (scenarioId: 'CLEAR' | 'BASELINE' | 'EMERGENCY' | 'TECH_SICK') => Promise<void>;
   loading: boolean;
 }
 
@@ -40,6 +40,38 @@ export const ScenarioPresetsModal: React.FC<ScenarioPresetsModalProps> = ({
 
         {/* Scenarios List */}
         <div className="p-6 space-y-4 overflow-y-auto max-h-[75vh]">
+          {/* Clean Slate Option */}
+          <div className="border border-[#DAD3C9] rounded-xl p-4 hover:border-[#102025] hover:shadow-md transition-all bg-[#FFFFFF]">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-lg bg-[#F2EDE3] text-[#102025] mt-0.5">
+                  <Inbox className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-[#102025] uppercase tracking-wide">
+                    Clean Slate (0 Work Orders)
+                  </h3>
+                  <p className="text-xs text-[#6B675E] mt-1">
+                    Empty backlog. 4 technicians ready on shift with 0 assignments.
+                  </p>
+                  <p className="text-[11px] text-[#6B675E] mt-1">
+                    Perfect for creating custom tickets (+ Work Order) and testing from scratch.
+                  </p>
+                </div>
+              </div>
+              <button
+                disabled={loading}
+                onClick={async () => {
+                  await onSelectScenario('CLEAR');
+                  onClose();
+                }}
+                className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#FBF8F1] border border-[#DAD3C9] text-[#102025] hover:bg-[#F2EDE3] transition-all shadow-sm disabled:opacity-50"
+              >
+                Clear to 0
+              </button>
+            </div>
+          </div>
+
           {/* Scenario 1 */}
           <div className="border border-[#DAD3C9] rounded-xl p-4 hover:border-[#102025] hover:shadow-md transition-all bg-[#FBF8F1]/60">
             <div className="flex items-start justify-between gap-3">

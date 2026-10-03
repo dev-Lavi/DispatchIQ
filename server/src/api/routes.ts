@@ -333,12 +333,28 @@ apiRouter.post('/emergency', (req: Request, res: Response) => {
   }
 });
 
-// 8. Demo Reset
+// 8. Demo Reset & Dataset Controls
 apiRouter.post('/demo/reset', (req: Request, res: Response) => {
+  store.resetToEmpty();
+  res.json({
+    success: true,
+    message: 'Reset to clean slate (4 technicians, 0 work orders)',
+  });
+});
+
+apiRouter.post('/demo/clear', (req: Request, res: Response) => {
+  store.resetToEmpty();
+  res.json({
+    success: true,
+    message: 'Cleared all work orders and assignments to 0',
+  });
+});
+
+apiRouter.post('/demo/seed', (req: Request, res: Response) => {
   store.resetToSeed();
   res.json({
     success: true,
-    message: 'Reset to baseline demo dataset (4 technicians, 10 unassigned requests)',
+    message: 'Loaded baseline demo benchmark (4 technicians, 10 requests)',
   });
 });
 

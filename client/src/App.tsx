@@ -40,6 +40,10 @@ export const App: React.FC = () => {
 
   // 1. Generate Plan
   const handleGeneratePlan = async () => {
+    if (state && state.requests.length === 0) {
+      setError('Backlog is empty (0 work orders). Please add a work order (+ Work Order) or load a scenario from "Scenarios" first.');
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -185,14 +189,21 @@ export const App: React.FC = () => {
   };
 
   // 10. Run Preset Scenarios
-  const handleSelectScenario = async (scenarioId: 'BASELINE' | 'EMERGENCY' | 'TECH_SICK') => {
+  const handleSelectScenario = async (scenarioId: 'CLEAR' | 'BASELINE' | 'EMERGENCY' | 'TECH_SICK') => {
     setLoading(true);
     setError(null);
     try {
-      if (scenarioId === 'BASELINE') {
-        await api.resetDemo();
+      if (scenarioId === 'CLEAR') {
+        await api.clearBacklog();
+        setSelectedVersionId(null);
+        setSelectedAssignment(null);
+      } else if (scenarioId === 'BASELINE') {
+        await api.loadSeedDataset();
         await api.generatePlan();
       } else if (scenarioId === 'EMERGENCY') {
+        if (state?.requests.length === 0) {
+          await api.loadSeedDataset();
+        }
         if (state?.schedule.status === 'DRAFT') {
           await api.generatePlan();
           await api.approvePlan();
@@ -204,6 +215,9 @@ export const App: React.FC = () => {
         });
         setShowDiff(true);
       } else if (scenarioId === 'TECH_SICK') {
+        if (state?.requests.length === 0) {
+          await api.loadSeedDataset();
+        }
         if (state?.schedule.status === 'DRAFT') {
           await api.generatePlan();
           await api.approvePlan();
@@ -337,6 +351,8 @@ export const App: React.FC = () => {
           assignments={displayedAssignments}
           notifications={state.notifications}
           auditLogs={state.auditLogs}
+          onOpenCreateOrder={() => setIsCreateOrderOpen(true)}
+          onLoadBenchmark={() => handleSelectScenario('BASELINE')}
         />
       </main>
 

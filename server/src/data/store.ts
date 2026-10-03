@@ -32,7 +32,7 @@ export class DispatchStore {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    this.resetToSeed();
+    this.resetToEmpty();
   }
 
   public static getInstance(): DispatchStore {
@@ -40,6 +40,41 @@ export class DispatchStore {
       DispatchStore.instance = new DispatchStore();
     }
     return DispatchStore.instance;
+  }
+
+  public resetToEmpty(): void {
+    this.technicians.clear();
+    for (const tech of SEED_TECHNICIANS) {
+      this.technicians.set(tech.id, JSON.parse(JSON.stringify(tech)));
+    }
+
+    this.requests.clear();
+    this.versions.clear();
+    this.assignmentsByVersion.clear();
+    this.draftProposal = null;
+
+    this.schedule = {
+      id: 'sch-main',
+      targetDate: TARGET_DATE,
+      status: 'DRAFT',
+      currentVersionId: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.auditLogs = [
+      {
+        id: `audit-${Date.now()}`,
+        entityType: 'SCHEDULE',
+        entityId: this.schedule.id,
+        action: 'RESET',
+        actor: 'SYSTEM',
+        changeDiff: { message: 'System initialized with clean slate (0 work orders)' },
+        timestamp: new Date().toISOString(),
+      },
+    ];
+
+    this.notifications = [];
   }
 
   public resetToSeed(): void {

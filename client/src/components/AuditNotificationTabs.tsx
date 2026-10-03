@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, History, Inbox, Flame } from 'lucide-react';
+import { Bell, History, Inbox, Flame, PlusCircle, Sparkles } from 'lucide-react';
 import { ServiceRequest, Notification, AuditLog, Assignment } from '../types';
 
 interface AuditNotificationTabsProps {
@@ -7,6 +7,8 @@ interface AuditNotificationTabsProps {
   assignments: Assignment[];
   notifications: Notification[];
   auditLogs: AuditLog[];
+  onOpenCreateOrder?: () => void;
+  onLoadBenchmark?: () => void;
 }
 
 export const AuditNotificationTabs: React.FC<AuditNotificationTabsProps> = ({
@@ -14,6 +16,8 @@ export const AuditNotificationTabs: React.FC<AuditNotificationTabsProps> = ({
   assignments,
   notifications,
   auditLogs,
+  onOpenCreateOrder,
+  onLoadBenchmark,
 }) => {
   const [activeTab, setActiveTab] = useState<'backlog' | 'notifications' | 'audit'>('backlog');
 
@@ -65,8 +69,40 @@ export const AuditNotificationTabs: React.FC<AuditNotificationTabsProps> = ({
       <div className="p-5 max-h-72 overflow-y-auto bg-[#FFFFFF]">
         {activeTab === 'backlog' && (
           <div>
-            {unassignedRequests.length === 0 ? (
-              <p className="text-xs text-[#6B675E] italic p-2 font-medium">All work orders are currently assigned.</p>
+            {requests.length === 0 ? (
+              <div className="py-8 px-4 flex flex-col items-center justify-center text-center max-w-md mx-auto">
+                <div className="w-12 h-12 rounded-2xl bg-[#F2EDE3] border border-[#DAD3C9] flex items-center justify-center text-[#294047] mb-3 shadow-inner">
+                  <Inbox className="w-6 h-6 text-[#294047]" />
+                </div>
+                <h4 className="text-sm font-bold text-[#102025]">Dispatch Backlog is Empty (0 Work Orders)</h4>
+                <p className="text-xs text-[#6B675E] mt-1 mb-4">
+                  The fleet is active on shift. Create custom service orders or load a benchmark scenario for fast evaluation.
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  {onOpenCreateOrder && (
+                    <button
+                      onClick={onOpenCreateOrder}
+                      className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-[#FFFDF8] bg-[#07171D] hover:bg-[#102025] rounded-xl transition-all shadow-sm"
+                    >
+                      <PlusCircle className="w-3.5 h-3.5 text-[#A9DFCB]" />
+                      <span>+ Create Custom Work Order</span>
+                    </button>
+                  )}
+                  {onLoadBenchmark && (
+                    <button
+                      onClick={onLoadBenchmark}
+                      className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-[#102025] bg-[#FBF8F1] border border-[#DAD3C9] hover:bg-[#F2EDE3] rounded-xl transition-all shadow-sm"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-[#294047]" />
+                      <span>⚡ Load 10 Benchmark Orders</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : unassignedRequests.length === 0 ? (
+              <div className="p-4 text-center text-xs text-[#2A6E57] bg-[#EBF8F4] border border-[#A9DFCB] rounded-xl font-medium">
+                ✓ All {requests.length} work orders have been successfully assigned to technicians.
+              </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {unassignedRequests.map(req => (

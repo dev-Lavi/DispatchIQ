@@ -139,4 +139,16 @@ export const api = {
     if (!res.ok) throw new Error('Failed to reset demo dataset');
     return res.json();
   },
+
+  async clearBacklog(): Promise<any> {
+    const res = await fetch(`${API_BASE}/demo/clear`, { method: 'POST' });
+    if (!res.ok) throw new Error('Failed to clear work orders');
+    return res.json();
+  },
+
+  async loadSeedDataset(): Promise<any> {
+    const res = await fetch(`${API_BASE}/demo/seed`, { method: 'POST' });
+    if (!res.ok) throw new Error('Failed to load seed dataset');
+    return res.json();
+  },
 };
